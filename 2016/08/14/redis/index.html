@@ -1,0 +1,947 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="LIY' Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="redis接口的java封装
+主要需要实现几个功能：
+
+数据获取
+数据缓存
+分布式锁
+带锁的数据处理
+
+
+为了实现这几个功能，对redis做了一层相对很薄的封装，过程如下：
+
+首先，我们需要定义redis的访问接口，如下：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis">
+<meta property="og:url" content="https://li-y.github.io/2016/08/14/redis/index.html">
+<meta property="og:site_name" content="LIY' Blog">
+<meta property="og:description" content="redis接口的java封装
+主要需要实现几个功能：
+
+数据获取
+数据缓存
+分布式锁
+带锁的数据处理
+
+
+为了实现这几个功能，对redis做了一层相对很薄的封装，过程如下：
+
+首先，我们需要定义redis的访问接口，如下：">
+<meta property="og:updated_time" content="2016-10-09T07:00:52.723Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis">
+<meta name="twitter:description" content="redis接口的java封装
+主要需要实现几个功能：
+
+数据获取
+数据缓存
+分布式锁
+带锁的数据处理
+
+
+为了实现这几个功能，对redis做了一层相对很薄的封装，过程如下：
+
+首先，我们需要定义redis的访问接口，如下：">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6304561315805398000,
+      author: '主编大人'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://li-y.github.io/2016/08/14/redis/"/>
+
+  <title> Redis | LIY' Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?af837939af4a94ddf6a2760276b9372f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">LIY' Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">新的开始</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+
+	<li> <a title="把这个链接拖到你的Chrome收藏夹工具栏中" href='javascript:(function() {
+    function c() {
+        var e = document.createElement("link");
+        e.setAttribute("type", "text/css");
+        e.setAttribute("rel", "stylesheet");
+        e.setAttribute("href", f);
+        e.setAttribute("class", l);
+        document.body.appendChild(e)
+    }
+ 
+    function h() {
+        var e = document.getElementsByClassName(l);
+        for (var t = 0; t < e.length; t++) {
+            document.body.removeChild(e[t])
+        }
+    }
+ 
+    function p() {
+        var e = document.createElement("div");
+        e.setAttribute("class", a);
+        document.body.appendChild(e);
+        setTimeout(function() {
+            document.body.removeChild(e)
+        }, 100)
+    }
+ 
+    function d(e) {
+        return {
+            height : e.offsetHeight,
+            width : e.offsetWidth
+        }
+    }
+ 
+    function v(i) {
+        var s = d(i);
+        return s.height > e && s.height < n && s.width > t && s.width < r
+    }
+ 
+    function m(e) {
+        var t = e;
+        var n = 0;
+        while (!!t) {
+            n += t.offsetTop;
+            t = t.offsetParent
+        }
+        return n
+    }
+ 
+    function g() {
+        var e = document.documentElement;
+        if (!!window.innerWidth) {
+            return window.innerHeight
+        } else if (e && !isNaN(e.clientHeight)) {
+            return e.clientHeight
+        }
+        return 0
+    }
+ 
+    function y() {
+        if (window.pageYOffset) {
+            return window.pageYOffset
+        }
+        return Math.max(document.documentElement.scrollTop, document.body.scrollTop)
+    }
+ 
+    function E(e) {
+        var t = m(e);
+        return t >= w && t <= b + w
+    }
+ 
+    function S() {
+        var e = document.createElement("audio");
+        e.setAttribute("class", l);
+        e.src = i;
+        e.loop = false;
+        e.addEventListener("canplay", function() {
+            setTimeout(function() {
+                x(k)
+            }, 500);
+            setTimeout(function() {
+                N();
+                p();
+                for (var e = 0; e < O.length; e++) {
+                    T(O[e])
+                }
+            }, 15500)
+        }, true);
+        e.addEventListener("ended", function() {
+            N();
+            h()
+        }, true);
+        e.innerHTML = " <p>If you are reading this, it is because your browser does not support the audio element. We recommend that you get a new browser.</p> <p>";
+        document.body.appendChild(e);
+        e.play()
+    }
+ 
+    function x(e) {
+        e.className += " " + s + " " + o
+    }
+ 
+    function T(e) {
+        e.className += " " + s + " " + u[Math.floor(Math.random() * u.length)]
+    }
+ 
+    function N() {
+        var e = document.getElementsByClassName(s);
+        var t = new RegExp("\\b" + s + "\\b");
+        for (var n = 0; n < e.length; ) {
+            e[n].className = e[n].className.replace(t, "")
+        }
+    }
+ 
+    var e = 30;
+    var t = 30;
+    var n = 350;
+    var r = 350;
+    var i = "//s3.amazonaws.com/moovweb-marketing/playground/harlem-shake.mp3";
+    var s = "mw-harlem_shake_me";
+    var o = "im_first";
+    var u = ["im_drunk", "im_baked", "im_trippin", "im_blown"];
+    var a = "mw-strobe_light";
+    var f = "//s3.amazonaws.com/moovweb-marketing/playground/harlem-shake-style.css";
+    var l = "mw_added_css";
+    var b = g();
+    var w = y();
+    var C = document.getElementsByTagName("*");
+    var k = null;
+    for (var L = 0; L < C.length; L++) {
+        var A = C[L];
+        if (v(A)) {
+            if (E(A)) {
+                k = A;
+                break
+            }
+        }
+    }
+    if (A === null) {
+        console.warn("Could not find a node of the right size. Please try a different page.");
+        return
+    }
+    c();
+    S();
+    var O = [];
+    for (var L = 0; L < C.length; L++) {
+        var A = C[L];
+        if (v(A)) {
+            O.push(A)
+        }
+    }
+})()    '>High一下</a> </li>
+
+
+
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'pPvNWfHx6KuRDaitjyE5','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Redis
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-14T09:17:19+08:00" content="2016-08-14">
+              2016-08-14
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/14/redis/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/14/redis/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="redis接口的java封装"><a href="#redis接口的java封装" class="headerlink" title="redis接口的java封装"></a>redis接口的java封装</h2><ul>
+<li><p>主要需要实现几个功能：</p>
+<ul>
+<li>数据获取</li>
+<li>数据缓存</li>
+<li>分布式锁</li>
+<li>带锁的数据处理</li>
+</ul>
+</li>
+<li><p>为了实现这几个功能，对redis做了一层相对很薄的封装，过程如下：</p>
+<ul>
+<li>首先，我们需要定义redis的访问接口，如下：<a id="more"></a>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//数据查询,更新接口</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DataAccess</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">set</span><span class="params">(String key, T value)</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">set</span><span class="params">(String key, T value, <span class="keyword">int</span> validTime)</span></span>;</div><div class="line"></div><div class="line">    <span class="function">T <span class="title">get</span><span class="params">(String key)</span></span>;</div><div class="line"></div><div class="line">    <span class="function">List&lt;T&gt; <span class="title">popAll</span><span class="params">(String key)</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">push</span><span class="params">(String key, T value)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">//validTime = -1 表示无失效时间</span></div><div class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">setNX</span><span class="params">(String key, T value, <span class="keyword">int</span> validTime)</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">delete</span><span class="params">(String key)</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(String key, T value, <span class="keyword">int</span> timeout)</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unLock</span><span class="params">(String key)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>接口的实现我们基于构建匿名类的方式，数据访问基于RedisTemplate, 代码如下：</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div></pre></td><td class="code"><pre><div class="line">	<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisAccessBuilder</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line">    <span class="keyword">private</span> RedisTemplate&lt;String, T&gt; redisTemplate;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RedisAccessBuilder</span><span class="params">(RedisTemplate&lt;String, T&gt; redisTemplate)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.redisTemplate = redisTemplate;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//1 设置json序列化方法</span></div><div class="line">    <span class="comment">//2 设置redis访问器</span></div><div class="line">    <span class="comment">//3 构造匿名类</span></div><div class="line">    <span class="function"><span class="keyword">public</span> DataAccess&lt;T&gt; <span class="title">buildDataAccess</span><span class="params">(Class&lt;T&gt; clazz, <span class="keyword">final</span> DbDataGet&lt;T&gt; dbDataGet)</span> </span>&#123;</div><div class="line">        redisTemplate.setKeySerializer(<span class="keyword">new</span> StringRedisSerializer());</div><div class="line">        <span class="comment">//1</span></div><div class="line">        <span class="keyword">if</span> (clazz.equals(String.class)) &#123;</div><div class="line">            redisTemplate.setValueSerializer(<span class="keyword">new</span> StringRedisSerializer());</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            redisTemplate.setValueSerializer(<span class="keyword">new</span> Jackson2JsonRedisSerializer&lt;T&gt;(clazz));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">//2</span></div><div class="line">        <span class="keyword">final</span> ValueOperations&lt;String, T&gt; valueOperations= redisTemplate.opsForValue();</div><div class="line">        <span class="keyword">final</span> ListOperations&lt;String, T&gt; listOperations = redisTemplate.opsForList();</div><div class="line"></div><div class="line">        <span class="comment">//3</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> DataAccess&lt;T&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(String key, T value)</span> </span>&#123;</div><div class="line">                valueOperations.set(key, value);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(String key, T value, <span class="keyword">int</span> validTime)</span> </span>&#123;</div><div class="line">                set(key, value);</div><div class="line">                redisTemplate.expire(key, validTime, TimeUnit.SECONDS);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">(String key)</span> </span>&#123;</div><div class="line">                T data = valueOperations.get(key);</div><div class="line"></div><div class="line">                <span class="comment">//如果redis中没有且设置了数据库源,则从数据库中获取</span></div><div class="line">                <span class="keyword">if</span> (<span class="keyword">null</span> == data</div><div class="line">                        &amp;&amp; <span class="keyword">null</span> != dbDataGet) &#123;</div><div class="line">                    data = dbDataGet.get(key);</div><div class="line"></div><div class="line">                    <span class="keyword">if</span> (<span class="keyword">null</span> != data) &#123;</div><div class="line">                        <span class="comment">//默认保存一天</span></div><div class="line">                        set(key, data, Constants.ONE_DAY);</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                    <span class="keyword">try</span> &#123;</div><div class="line">                        <span class="comment">//避免数据库压力过大</span></div><div class="line">                        Thread.sleep(<span class="number">5</span>);</div><div class="line">                    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                        e.printStackTrace();</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                <span class="keyword">return</span> data;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> List&lt;T&gt; <span class="title">popAll</span><span class="params">(String key)</span> </span>&#123;</div><div class="line">                String listKey = <span class="string">"list#"</span> + key;</div><div class="line">                List&lt;T&gt; resList = listOperations.range(listKey, <span class="number">0</span>, -<span class="number">1</span>);</div><div class="line"></div><div class="line">                delete(listKey);</div><div class="line"></div><div class="line">                <span class="keyword">return</span> resList;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">push</span><span class="params">(String key, T value)</span> </span>&#123;</div><div class="line">                String listKey = <span class="string">"list#"</span> + key;</div><div class="line">                listOperations.rightPush(listKey, value);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">setNX</span><span class="params">(String key, T value, <span class="keyword">int</span> validTime)</span> </span>&#123;</div><div class="line">                <span class="keyword">if</span> (valueOperations.setIfAbsent(key, value)) &#123;</div><div class="line">                    <span class="comment">//todo throw exception</span></div><div class="line">                    <span class="keyword">if</span> (validTime &gt; <span class="number">0</span>) &#123;</div><div class="line">                        <span class="keyword">return</span> redisTemplate.expire(key, validTime, TimeUnit.SECONDS);</div><div class="line">                    &#125; <span class="keyword">else</span> &#123;</div><div class="line">                        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">delete</span><span class="params">(String key)</span> </span>&#123;</div><div class="line">                redisTemplate.delete(key);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(String key, T value, <span class="keyword">int</span> timeout)</span> </span>&#123;</div><div class="line">                String lockKey = <span class="string">"locked#"</span> + key;</div><div class="line">                <span class="keyword">long</span> startTime = System.currentTimeMillis();</div><div class="line">                <span class="keyword">int</span> sleepTimes = <span class="number">0</span>;</div><div class="line"></div><div class="line">                <span class="keyword">while</span> (!setNX(lockKey, value, Constants.MAX_LOCK_TIME)) &#123;</div><div class="line">                    <span class="keyword">try</span> &#123;</div><div class="line">                        Thread.sleep(<span class="number">1</span>);</div><div class="line"></div><div class="line">                        sleepTimes++;</div><div class="line"></div><div class="line">                        <span class="keyword">if</span> (sleepTimes % <span class="number">100</span> == <span class="number">0</span>) &#123;</div><div class="line">                            <span class="comment">//超时判断</span></div><div class="line">                            <span class="keyword">if</span> (System.currentTimeMillis() - startTime &gt; Constants.MAX_TIMEOUT * <span class="number">1000</span>) &#123;</div><div class="line">                                <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                            &#125;</div><div class="line">                        &#125;</div><div class="line">                    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">unLock</span><span class="params">(String key)</span> </span>&#123;</div><div class="line">                String lockKey = <span class="string">"locked#"</span> + key;</div><div class="line"></div><div class="line">                delete(lockKey);</div><div class="line">            &#125;</div><div class="line">        &#125;;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>在有了redis访问接口之后，我们基于它，可以继续定制redis缓存<br>redis缓存</li>
+</ul>
+</li>
+<li><p>我们的redis缓存分为两种：</p>
+<ul>
+<li><p>a:类似hashset，判断一个key是否存在，实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">			<span class="comment">//用redis实现的有时效缓存封装</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisCache</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> DataAccess&lt;String&gt; dataAccess;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RedisCache</span><span class="params">(RedisTemplate&lt;String, String&gt; redisTemplate)</span> </span>&#123;</div><div class="line">        RedisAccessBuilder&lt;String&gt; redisAccessBuilder = <span class="keyword">new</span> RedisAccessBuilder&lt;&gt;(redisTemplate);</div><div class="line"></div><div class="line">        dataAccess = redisAccessBuilder.buildDataAccess(String.class, <span class="keyword">null</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//如果不存在,则插入并返回true</span></div><div class="line">    <span class="comment">//否则返回false</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">cacheIfAbsent</span><span class="params">(String key, <span class="keyword">int</span> validSecond)</span> </span>&#123;</div><div class="line">        String cacheKey = <span class="string">"cached#"</span> + key;</div><div class="line">        String cacheValue = <span class="string">""</span> + System.currentTimeMillis();</div><div class="line"></div><div class="line">        <span class="keyword">return</span> dataAccess.setNX(cacheKey, cacheValue, validSecond);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>b 类似hashtable，通过一个key，查询value，为了保证数据的时效性，在实现中使用异步的方式从数据中查询数据，保证当前数据的有效性，同时为了保证效率，使用一个基于内存的hashmap来做第一层缓存，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div></pre></td><td class="code"><pre><div class="line">			<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MemCache</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line">    <span class="keyword">private</span> Map&lt;String, T&gt; map = <span class="keyword">new</span> ConcurrentHashMap&lt;String, T&gt;();</div><div class="line">    <span class="keyword">private</span> DataAccess&lt;T&gt; dataAccess;</div><div class="line">    <span class="keyword">private</span> DbDataGet&lt;T&gt; dbDataGet;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MemCache</span><span class="params">(RedisTemplate&lt;String, T&gt; redisTemplate, Class&lt;T&gt; clazz, <span class="keyword">final</span> DbDataGet&lt;T&gt; dbDataGet)</span> </span>&#123;</div><div class="line">        RedisAccessBuilder&lt;T&gt; redisAccessBuilder = <span class="keyword">new</span> RedisAccessBuilder&lt;&gt;(redisTemplate);</div><div class="line">        dataAccess = redisAccessBuilder.buildDataAccess(clazz, dbDataGet);</div><div class="line">        <span class="keyword">this</span>.dbDataGet = dbDataGet;</div><div class="line"></div><div class="line">        asynUpdateData();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//1 检查内存</span></div><div class="line">    <span class="comment">//2 查询redis(redis没有则查询数据库)</span></div><div class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">(String key)</span> </span>&#123;</div><div class="line">        <span class="comment">//1</span></div><div class="line">        T value = map.get(key);</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == value) &#123;</div><div class="line">            <span class="comment">//2</span></div><div class="line">            value = dataAccess.get(key);</div><div class="line">            map.put(key, value);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> value;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//异步更新数据,主要针对数据库中的数据被修改,造成和redis及内存不一致的情况</span></div><div class="line">    <span class="comment">//1 创建新的map</span></div><div class="line">    <span class="comment">//2 从原map中遍历数据</span></div><div class="line">    <span class="comment">//3 从数据库中获取数据,判断是否和内存中一致</span></div><div class="line">    <span class="comment">//4 如果不一致,则更新内存及redis中的数据</span></div><div class="line">    <span class="comment">//5 将新的map作为当前的map</span></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">asynUpdateData</span><span class="params">()</span> </span>&#123;</div><div class="line">        ExecutorService service = Executors.newFixedThreadPool(<span class="number">1</span>);</div><div class="line"></div><div class="line">        service.execute(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">                    <span class="keyword">int</span> times = <span class="number">0</span>;</div><div class="line"></div><div class="line">                    <span class="keyword">try</span> &#123;</div><div class="line">                        <span class="comment">//1</span></div><div class="line">                        Map&lt;String, T&gt; newMap = <span class="keyword">new</span> ConcurrentHashMap&lt;&gt;();</div><div class="line"></div><div class="line">                        <span class="comment">//2</span></div><div class="line">                        <span class="keyword">for</span> (String key : map.keySet()) &#123;</div><div class="line">                            times++;</div><div class="line"></div><div class="line">                            <span class="comment">//3</span></div><div class="line">                            <span class="keyword">if</span> (<span class="keyword">null</span> != dataAccess.get(key)) &#123;</div><div class="line">                                T value = dbDataGet.get(key);</div><div class="line"></div><div class="line">                                <span class="comment">//4</span></div><div class="line">                                <span class="keyword">if</span> (value != map.get(key)) &#123;</div><div class="line">                                    newMap.put(key, value);</div><div class="line">                                    dataAccess.set(key, value, Constants.ONE_DAY);</div><div class="line">                                &#125;</div><div class="line">                            &#125;</div><div class="line"></div><div class="line">                            <span class="comment">//每100条控制一下时间,避免数据库压力过大</span></div><div class="line">                            <span class="keyword">if</span> (times % <span class="number">100</span> == <span class="number">0</span>) &#123;</div><div class="line">                                Thread.sleep(<span class="number">100</span>);</div><div class="line">                            &#125;</div><div class="line">                        &#125;</div><div class="line"></div><div class="line">                        <span class="comment">//5</span></div><div class="line">                        map = newMap;</div><div class="line"></div><div class="line">                        Thread.sleep(Constants.FIVE_MINUTES);</div><div class="line">                    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                        log.info(<span class="string">"interrupted "</span> + e);</div><div class="line">                    &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">                        log.info(<span class="string">"exception "</span> + e);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>3&amp;4 数据处理和分布式锁我们放在一起处理，首先定义数据处理接口</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">			<span class="comment">//数据处理接口</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DataProcess</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line">    <span class="function">DetailRes <span class="title">process</span><span class="params">(String key, T data)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>之后定义带锁的数据处理接口</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">			<span class="comment">//锁住key后执行数据处理</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DataProcessWithLock</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line">    <span class="function">DetailRes <span class="title">execute</span><span class="params">(String key, T data)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>我们需要用户自己实现DataProcess接口，并在构建DataProcessWithLock的时候传入，构建DataProcessWithLock的代码如下：</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">			<span class="comment">//带锁的数据处理封装</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisDataProcessWithLockBuilder</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> DataAccess&lt;String&gt; dataAccess;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RedisDataProcessWithLockBuilder</span><span class="params">(RedisTemplate&lt;String, String&gt; redisTemplate)</span> </span>&#123;</div><div class="line">        RedisAccessBuilder&lt;String&gt; redisAccessBuilder = <span class="keyword">new</span> RedisAccessBuilder&lt;&gt;(redisTemplate);</div><div class="line"></div><div class="line">        dataAccess = redisAccessBuilder.buildDataAccess(String.class, <span class="keyword">null</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> &lt;T&gt; <span class="function">DataProcessWithLock&lt;T&gt; <span class="title">buildDataProcessWithLock</span><span class="params">(<span class="keyword">final</span> DataProcess&lt;T&gt; dataProcess)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> DataProcessWithLock&lt;T&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> DetailRes <span class="title">execute</span><span class="params">(String key, T data)</span> </span>&#123;</div><div class="line">                <span class="comment">//value为当前时间,方便追查问题</span></div><div class="line">                String lockValue = <span class="string">""</span> + System.currentTimeMillis();</div><div class="line"></div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    <span class="keyword">if</span> (dataAccess.tryLock(key, lockValue, Constants.MAX_LOCK_TIME)) &#123;</div><div class="line">                        <span class="keyword">return</span> dataProcess.process(key, data);</div><div class="line">                    &#125; <span class="keyword">else</span> &#123;</div><div class="line">                        <span class="keyword">return</span> <span class="keyword">new</span> DetailRes(<span class="keyword">false</span>, key + <span class="string">" locked failed"</span>);</div><div class="line">                    &#125;</div><div class="line">                &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> DetailRes(<span class="keyword">false</span>, key + <span class="string">" "</span> + e.toString());</div><div class="line">                &#125; <span class="keyword">finally</span> &#123;</div><div class="line">                    dataAccess.unLock(key);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="有了前面的各种准备之后，我们用一个例子做结。"><a href="#有了前面的各种准备之后，我们用一个例子做结。" class="headerlink" title="有了前面的各种准备之后，我们用一个例子做结。"></a>有了前面的各种准备之后，我们用一个例子做结。</h2><ul>
+<li><p>首先定义一个model：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@AllArgsConstructor</span></div><div class="line"><span class="meta">@NoArgsConstructor</span></div><div class="line"><span class="meta">@Data</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</div><div class="line">    <span class="keyword">long</span> userId;</div><div class="line">    String name;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>在对这个model处理前，我们要按userId将其锁住，之后的处理就是简单的将这个user打印出来，代码如下：</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Service</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisExample</span> </span>&#123;</div><div class="line">    <span class="meta">@Autowired</span></div><div class="line">    RedisTemplate&lt;String, String&gt; stringRedisTemplate;</div><div class="line"></div><div class="line">    <span class="meta">@Autowired</span></div><div class="line">    RedisTemplate&lt;String, User&gt; userRedisTemplate;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> DataProcessWithLock&lt;User&gt; dataProcessWithLock;</div><div class="line"></div><div class="line">    <span class="meta">@PostConstruct</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</div><div class="line">        RedisDataProcessWithLockBuilder redisDataProcessWithLockBuilder =</div><div class="line">                <span class="keyword">new</span> RedisDataProcessWithLockBuilder(stringRedisTemplate);</div><div class="line"></div><div class="line">        dataProcessWithLock = redisDataProcessWithLockBuilder.buildDataProcessWithLock(<span class="keyword">new</span> DataProcess&lt;User&gt;() &#123;</div><div class="line">            <span class="comment">//用户自己的实现</span></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> DetailRes <span class="title">process</span><span class="params">(String key, User user)</span> </span>&#123;</div><div class="line">                System.out.println(user);</div><div class="line"></div><div class="line">                <span class="keyword">return</span> <span class="keyword">new</span> DetailRes(<span class="keyword">true</span>, <span class="string">""</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">()</span> </span>&#123;</div><div class="line">        User user = <span class="keyword">new</span> User(<span class="number">111</span>, <span class="string">"littlersmall"</span>);</div><div class="line">        String key = <span class="string">""</span> + user.getUserId();</div><div class="line"></div><div class="line">        dataProcessWithLock.execute(key, user);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="github地址如下"><a href="#github地址如下" class="headerlink" title="github地址如下"></a>github地址如下</h2>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div></div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/path/to/wechat-reward-image" alt="LIY WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/path/to/alipay-reward-image" alt="LIY Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/12/love/" rel="next" title="情商vs智商">
+                <i class="fa fa-chevron-left"></i> 情商vs智商
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/14/rabbitmq/" rel="prev" title="RabbitMQ">
+                RabbitMQ <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/14/redis/"
+           data-title="Redis" data-url="https://li-y.github.io/2016/08/14/redis/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="LIY" />
+          <p class="site-author-name" itemprop="name">LIY</p>
+          <p class="site-description motion-element" itemprop="description">     往事浓淡, 色如清, 已轻. 经年悲喜, 镜如净, 已净.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ly0518" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/YOG_LI" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/5761822403?is_all=1" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.douban.com/people/147649772/" target="_blank" title="豆瓣">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  豆瓣
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#redis接口的java封装"><span class="nav-number">1.</span> <span class="nav-text">redis接口的java封装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#有了前面的各种准备之后，我们用一个例子做结。"><span class="nav-number">2.</span> <span class="nav-text">有了前面的各种准备之后，我们用一个例子做结。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#github地址如下"><span class="nav-number">3.</span> <span class="nav-text">github地址如下</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2010 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LIY</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"li-y"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
