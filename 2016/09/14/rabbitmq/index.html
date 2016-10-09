@@ -102,7 +102,7 @@
 <meta property="og:description" content="rabbitmq可靠确认模式的java封装及示例最近的一个计费项目，在rpc调用和流式处理之间徘徊了许久，后来选择流式处理。一是可以增加吞吐量，二是事务的控制相比于rpc要容易很多。
 确定了流式处理的方式，后续是技术的选型。刚开始倾向于用storm，无奈文档实在太少，折腾起来着实费劲。最终放弃，改用消息队列+微服务的方式实现。
 消息队列的选型上，有activemq，rabbitmq，kafka等。">
-<meta property="og:updated_time" content="2016-10-09T06:28:05.437Z">
+<meta property="og:updated_time" content="2016-10-09T06:29:33.198Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RabbitMQ">
 <meta name="twitter:description" content="rabbitmq可靠确认模式的java封装及示例最近的一个计费项目，在rpc调用和流式处理之间徘徊了许久，后来选择流式处理。一是可以增加吞吐量，二是事务的控制相比于rpc要容易很多。
@@ -505,10 +505,10 @@
 <p>确定了流式处理的方式，后续是技术的选型。刚开始倾向于用storm，无奈文档实在太少，折腾起来着实费劲。最终放弃，改用消息队列+微服务的方式实现。</p>
 <p>消息队列的选型上，有activemq，rabbitmq，kafka等。最开始倾向于用activemq，因为以前的项目用过，很多代码都是可直接复用的。后来看了不少文章对比，发现rabbitmq对多语言的支持更好一点，同时相比于kafka，牺牲了部分的性能换取了更好的稳定性安全性以及持久化。</p>
 <p>最终决定使用rabbitmq。</p>
+<a id="more"></a>
 <h2 id="rabbitmq的官网如下："><a href="#rabbitmq的官网如下：" class="headerlink" title="rabbitmq的官网如下："></a>rabbitmq的官网如下：</h2><ul>
 <li><a href="https://www.rabbitmq.com/" target="_blank" rel="external">rabbitmq</a></li>
 </ul>
-<a id="more"></a>
 <h2 id="对rabbitmq的封装，有几个目标："><a href="#对rabbitmq的封装，有几个目标：" class="headerlink" title="对rabbitmq的封装，有几个目标："></a>对rabbitmq的封装，有几个目标：</h2><ul>
 <li>提供send接口</li>
 <li>提供consume接口</li>
