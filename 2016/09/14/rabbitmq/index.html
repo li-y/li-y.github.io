@@ -102,7 +102,7 @@
 <meta property="og:description" content="rabbitmq可靠确认模式的java封装及示例最近的一个计费项目，在rpc调用和流式处理之间徘徊了许久，后来选择流式处理。一是可以增加吞吐量，二是事务的控制相比于rpc要容易很多。
 确定了流式处理的方式，后续是技术的选型。刚开始倾向于用storm，无奈文档实在太少，折腾起来着实费劲。最终放弃，改用消息队列+微服务的方式实现。
 消息队列的选型上，有activemq，rabbitmq，kafka等。">
-<meta property="og:updated_time" content="2016-10-09T06:29:33.198Z">
+<meta property="og:updated_time" content="2016-10-10T02:09:55.197Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RabbitMQ">
 <meta name="twitter:description" content="rabbitmq可靠确认模式的java封装及示例最近的一个计费项目，在rpc调用和流式处理之间徘徊了许久，后来选择流式处理。一是可以增加吞吐量，二是事务的控制相比于rpc要容易很多。
@@ -612,7 +612,15 @@
 <li>rabbitmq-service.bat start</li>
 </ul>
 </li>
-<li>4：浏览器访问localhost:55672  默认账号：guest  密码：guest</li>
+<li>4 :创建用户<ul>
+<li>rabbitmqctl.bat add_user ly 321581800<ul>
+<li>rabbitmqctl.bat set_user_tags ly administrator</li>
+</ul>
+</li>
+<li>rabbitmqctl.bat set_permissions -p / ly “.<em>“ “.</em>“ “.*”</li>
+</ul>
+</li>
+<li>5：浏览器访问localhost:15672  默认账号：guest  密码：guest</li>
 </ul>
 </li>
 </ul>
