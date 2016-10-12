@@ -1,0 +1,929 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="LIY' Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="实现Runnable线程案例
+使用() -&amp;gt; {} 替代匿名类：
+
+12345678910//Before Java 8:new Thread(new Runnable() &amp;#123;    @Override    public void run() &amp;#123;        System.out.println(&quot;Before Java8 &quot;);    &amp;#125;&amp;#125;).s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 8十个lambda表达式案例">
+<meta property="og:url" content="https://li-y.github.io/2016/01/14/Java lambda/index.html">
+<meta property="og:site_name" content="LIY' Blog">
+<meta property="og:description" content="实现Runnable线程案例
+使用() -&amp;gt; {} 替代匿名类：
+
+12345678910//Before Java 8:new Thread(new Runnable() &amp;#123;    @Override    public void run() &amp;#123;        System.out.println(&quot;Before Java8 &quot;);    &amp;#125;&amp;#125;).s">
+<meta property="og:updated_time" content="2016-10-12T10:58:47.757Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java 8十个lambda表达式案例">
+<meta name="twitter:description" content="实现Runnable线程案例
+使用() -&amp;gt; {} 替代匿名类：
+
+12345678910//Before Java 8:new Thread(new Runnable() &amp;#123;    @Override    public void run() &amp;#123;        System.out.println(&quot;Before Java8 &quot;);    &amp;#125;&amp;#125;).s">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6304561315805398000,
+      author: '主编大人'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://li-y.github.io/2016/01/14/Java lambda/"/>
+
+  <title> Java 8十个lambda表达式案例 | LIY' Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?af837939af4a94ddf6a2760276b9372f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">LIY' Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">新的开始</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+
+	<li> <a title="把这个链接拖到你的Chrome收藏夹工具栏中" href='javascript:(function() {
+    function c() {
+        var e = document.createElement("link");
+        e.setAttribute("type", "text/css");
+        e.setAttribute("rel", "stylesheet");
+        e.setAttribute("href", f);
+        e.setAttribute("class", l);
+        document.body.appendChild(e)
+    }
+ 
+    function h() {
+        var e = document.getElementsByClassName(l);
+        for (var t = 0; t < e.length; t++) {
+            document.body.removeChild(e[t])
+        }
+    }
+ 
+    function p() {
+        var e = document.createElement("div");
+        e.setAttribute("class", a);
+        document.body.appendChild(e);
+        setTimeout(function() {
+            document.body.removeChild(e)
+        }, 100)
+    }
+ 
+    function d(e) {
+        return {
+            height : e.offsetHeight,
+            width : e.offsetWidth
+        }
+    }
+ 
+    function v(i) {
+        var s = d(i);
+        return s.height > e && s.height < n && s.width > t && s.width < r
+    }
+ 
+    function m(e) {
+        var t = e;
+        var n = 0;
+        while (!!t) {
+            n += t.offsetTop;
+            t = t.offsetParent
+        }
+        return n
+    }
+ 
+    function g() {
+        var e = document.documentElement;
+        if (!!window.innerWidth) {
+            return window.innerHeight
+        } else if (e && !isNaN(e.clientHeight)) {
+            return e.clientHeight
+        }
+        return 0
+    }
+ 
+    function y() {
+        if (window.pageYOffset) {
+            return window.pageYOffset
+        }
+        return Math.max(document.documentElement.scrollTop, document.body.scrollTop)
+    }
+ 
+    function E(e) {
+        var t = m(e);
+        return t >= w && t <= b + w
+    }
+ 
+    function S() {
+        var e = document.createElement("audio");
+        e.setAttribute("class", l);
+        e.src = i;
+        e.loop = false;
+        e.addEventListener("canplay", function() {
+            setTimeout(function() {
+                x(k)
+            }, 500);
+            setTimeout(function() {
+                N();
+                p();
+                for (var e = 0; e < O.length; e++) {
+                    T(O[e])
+                }
+            }, 15500)
+        }, true);
+        e.addEventListener("ended", function() {
+            N();
+            h()
+        }, true);
+        e.innerHTML = " <p>If you are reading this, it is because your browser does not support the audio element. We recommend that you get a new browser.</p> <p>";
+        document.body.appendChild(e);
+        e.play()
+    }
+ 
+    function x(e) {
+        e.className += " " + s + " " + o
+    }
+ 
+    function T(e) {
+        e.className += " " + s + " " + u[Math.floor(Math.random() * u.length)]
+    }
+ 
+    function N() {
+        var e = document.getElementsByClassName(s);
+        var t = new RegExp("\\b" + s + "\\b");
+        for (var n = 0; n < e.length; ) {
+            e[n].className = e[n].className.replace(t, "")
+        }
+    }
+ 
+    var e = 30;
+    var t = 30;
+    var n = 350;
+    var r = 350;
+    var i = "//s3.amazonaws.com/moovweb-marketing/playground/harlem-shake.mp3";
+    var s = "mw-harlem_shake_me";
+    var o = "im_first";
+    var u = ["im_drunk", "im_baked", "im_trippin", "im_blown"];
+    var a = "mw-strobe_light";
+    var f = "//s3.amazonaws.com/moovweb-marketing/playground/harlem-shake-style.css";
+    var l = "mw_added_css";
+    var b = g();
+    var w = y();
+    var C = document.getElementsByTagName("*");
+    var k = null;
+    for (var L = 0; L < C.length; L++) {
+        var A = C[L];
+        if (v(A)) {
+            if (E(A)) {
+                k = A;
+                break
+            }
+        }
+    }
+    if (A === null) {
+        console.warn("Could not find a node of the right size. Please try a different page.");
+        return
+    }
+    c();
+    S();
+    var O = [];
+    for (var L = 0; L < C.length; L++) {
+        var A = C[L];
+        if (v(A)) {
+            O.push(A)
+        }
+    }
+})()    '>High一下</a> </li>
+
+
+
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'pPvNWfHx6KuRDaitjyE5','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Java 8十个lambda表达式案例
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-01-14T09:17:19+08:00" content="2016-01-14">
+              2016-01-14
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/01/14/Java lambda/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/14/Java lambda/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="实现Runnable线程案例"><a href="#实现Runnable线程案例" class="headerlink" title="实现Runnable线程案例"></a>实现Runnable线程案例</h2><ul>
+<li>使用() -&gt; {} 替代匿名类：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Before Java 8:</span></div><div class="line"><span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"Before Java8 "</span>);</div><div class="line">    &#125;</div><div class="line">&#125;).start();</div><div class="line"></div><div class="line"><span class="comment">//Java 8 way:</span></div><div class="line"><span class="keyword">new</span> Thread( () -&gt; System.out.println(<span class="string">"In Java8!"</span>) ).start();</div></pre></td></tr></table></figure>
+<pre><code>Output:
+too much code, for too little to do
+Lambda expression rocks !!
+</code></pre><a id="more"></a>
+<h2 id="实现事件处理"><a href="#实现事件处理" class="headerlink" title="实现事件处理"></a>实现事件处理</h2><ul>
+<li><p>如果你曾经做过Swing 编程，你将永远不会忘记编写事件侦听器代码。使用lambda表达式如下所示写出更好的事件侦听器的代码。</p>
+</li>
+<li><p>在java 8中你可以使用Lambda表达式替代丑陋的匿名类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Before Java 8:</span></div><div class="line">JButton show =  <span class="keyword">new</span> JButton(<span class="string">"Show"</span>);</div><div class="line">show.addActionListener(<span class="keyword">new</span> ActionListener() &#123;</div><div class="line">     <span class="meta">@Override</span></div><div class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">actionPerformed</span><span class="params">(ActionEvent e)</span> </span>&#123;</div><div class="line">           System.out.println(<span class="string">"without lambda expression is boring"</span>);</div><div class="line">        &#125;</div><div class="line">     &#125;);</div></pre></td></tr></table></figure>
+<p>// Java 8 way:<br>show.addActionListener((e) -&gt; {</p>
+<pre><code>System.out.println(&quot;Action !! Lambda expressions Rocks&quot;);
+</code></pre><p>});</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">​</div><div class="line"></div><div class="line">## 使用Lambda表达式遍历List集合</div><div class="line"></div><div class="line">* 方法引用是使用两个冒号::这个操作符号。</div><div class="line"></div><div class="line">```java</div><div class="line">//Prior Java 8 :</div><div class="line">List features = Arrays.asList(&quot;Lambdas&quot;, &quot;Default Method&quot;, </div><div class="line">&quot;Stream API&quot;, &quot;Date and Time API&quot;);</div><div class="line">for (String feature : features) &#123;</div><div class="line">   System.out.println(feature);</div><div class="line">&#125;</div><div class="line"></div><div class="line">//In Java 8:</div><div class="line">List features = Arrays.asList(&quot;Lambdas&quot;, &quot;Default Method&quot;, &quot;Stream API&quot;,</div><div class="line"> &quot;Date and Time API&quot;);</div><div class="line">features.forEach(n -&gt; System.out.println(n));</div><div class="line"></div><div class="line">// Even better use Method reference feature of Java 8</div><div class="line">// method reference is denoted by :: (double colon) operator</div><div class="line">// looks similar to score resolution operator of C++</div><div class="line">features.forEach(System.out::println);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Output:</div><div class="line">Lambdas</div><div class="line">Default Method</div><div class="line">Stream API</div><div class="line">Date and Time API</div></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+</ul>
+<h2 id="使用Lambda表达式和函数接口"><a href="#使用Lambda表达式和函数接口" class="headerlink" title="使用Lambda表达式和函数接口"></a>使用Lambda表达式和函数接口</h2><ul>
+<li><p>为了支持函数编程，Java 8加入了一个新的包java.util.function，其中有一个接口java.util.function.Predicate是支持Lambda函数编程：</p>
+<p>​</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(args[])</span></span>&#123;</div><div class="line">  List languages = Arrays.asList(<span class="string">"Java"</span>, <span class="string">"Scala"</span>, <span class="string">"C++"</span>, <span class="string">"Haskell"</span>, <span class="string">"Lisp"</span>);</div><div class="line"></div><div class="line">  System.out.println(<span class="string">"Languages which starts with J :"</span>);</div><div class="line">  filter(languages, (str)-&gt;str.startsWith(<span class="string">"J"</span>));</div><div class="line"></div><div class="line">  System.out.println(<span class="string">"Languages which ends with a "</span>);</div><div class="line">  filter(languages, (str)-&gt;str.endsWith(<span class="string">"a"</span>));</div><div class="line"></div><div class="line">  System.out.println(<span class="string">"Print all languages :"</span>);</div><div class="line">  filter(languages, (str)-&gt;<span class="keyword">true</span>);</div><div class="line"></div><div class="line">   System.out.println(<span class="string">"Print no language : "</span>);</div><div class="line">   filter(languages, (str)-&gt;<span class="keyword">false</span>);</div><div class="line"></div><div class="line">   System.out.println(<span class="string">"Print language whose length greater than 4:"</span>);</div><div class="line">   filter(languages, (str)-&gt;str.length() &gt; <span class="number">4</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">filter</span><span class="params">(List names, Predicate condition)</span> </span>&#123;</div><div class="line">    <span class="keyword">for</span>(String name: names)  &#123;</div><div class="line">       <span class="keyword">if</span>(condition.test(name)) &#123;</div><div class="line">          System.out.println(name + <span class="string">" "</span>);</div><div class="line">       &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>Output:</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">Languages which starts with J :</div><div class="line">Java</div><div class="line">Languages which ends with a</div><div class="line">Java</div><div class="line">Scala</div><div class="line">Print all languages :</div><div class="line">Java</div><div class="line">Scala</div><div class="line">C++</div><div class="line">Haskell</div><div class="line">Lisp</div><div class="line">Print no language :</div><div class="line">Print language whose length greater than <span class="number">4</span>:</div><div class="line">Scala</div><div class="line">Haskell</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Even better</span></div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">filter</span><span class="params">(List names, Predicate condition)</span> </span>&#123;</div><div class="line">    names.stream().filter((name) -&gt; (condition.test(name)))</div><div class="line">        .forEach((name) -&gt; &#123;System.out.println(name + <span class="string">" "</span>);</div><div class="line">    &#125;);</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<h2 id="使用Lambda实现Map-和-Reduce"><a href="#使用Lambda实现Map-和-Reduce" class="headerlink" title="使用Lambda实现Map 和 Reduce"></a>使用Lambda实现Map 和 Reduce</h2><ul>
+<li>最流行的函数编程概念是map，它允许你改变你的对象，在这个案例中，我们将costBeforeTeax集合中每个元素改变了增加一定的数值，我们将Lambda表达式 x -&gt; x*x传送map()方法，这将应用到stream中所有元素。然后我们使用 forEach() 打印出这个集合的元素.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// applying 12% VAT on each purchase</span></div><div class="line"><span class="comment">// Without lambda expressions:</span></div><div class="line">List costBeforeTax = Arrays.asList(<span class="number">100</span>, <span class="number">200</span>, <span class="number">300</span>, <span class="number">400</span>, <span class="number">500</span>);</div><div class="line"><span class="keyword">for</span> (Integer cost : costBeforeTax) &#123;</div><div class="line">      <span class="keyword">double</span> price = cost + .<span class="number">12</span>*cost;</div><div class="line">      System.out.println(price);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// With Lambda expression:</span></div><div class="line">List costBeforeTax = Arrays.asList(<span class="number">100</span>, <span class="number">200</span>, <span class="number">300</span>, <span class="number">400</span>, <span class="number">500</span>);</div><div class="line">costBeforeTax.stream().map((cost) -&gt; cost + .<span class="number">12</span>*cost)</div><div class="line">                      .forEach(System.out::println);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">`Output`</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">112.0</div><div class="line">224.0</div><div class="line">336.0</div><div class="line">448.0</div><div class="line">560.0</div><div class="line">112.0</div><div class="line">224.0</div><div class="line">336.0</div><div class="line">448.0</div><div class="line">560.0</div></pre></td></tr></table></figure>
+<ul>
+<li><p>reduce() 是将集合中所有值结合进一个，Reduce类似SQL语句中的sum(), avg() 或count(),</p>
+<p>​</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Applying 12% VAT on each purchase</span></div><div class="line"><span class="comment">// Old way:</span></div><div class="line">List costBeforeTax = Arrays.asList(<span class="number">100</span>, <span class="number">200</span>, <span class="number">300</span>, <span class="number">400</span>, <span class="number">500</span>);</div><div class="line"><span class="keyword">double</span> total = <span class="number">0</span>;</div><div class="line"><span class="keyword">for</span> (Integer cost : costBeforeTax) &#123;</div><div class="line"> <span class="keyword">double</span> price = cost + .<span class="number">12</span>*cost;</div><div class="line"> total = total + price;</div><div class="line"> </div><div class="line">&#125;</div><div class="line">System.out.println(<span class="string">"Total : "</span> + total);</div><div class="line"></div><div class="line"><span class="comment">// New way:</span></div><div class="line">List costBeforeTax = Arrays.asList(<span class="number">100</span>, <span class="number">200</span>, <span class="number">300</span>, <span class="number">400</span>, <span class="number">500</span>);</div><div class="line"><span class="keyword">double</span> bill = costBeforeTax.stream().map((cost) -&gt; cost + .<span class="number">12</span>*cost)</div><div class="line">                                    .reduce((sum, cost) -&gt; sum + cost)</div><div class="line">                                    .get();</div><div class="line">System.out.println(<span class="string">"Total : "</span> + bill);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Output</div><div class="line">Total : 1680.0</div><div class="line">Total : 1680.0</div></pre></td></tr></table></figure>
+<h2 id="通过filtering-创建一个字符串String的集合"><a href="#通过filtering-创建一个字符串String的集合" class="headerlink" title="通过filtering 创建一个字符串String的集合"></a>通过<strong>filtering </strong>创建一个字符串String的集合</h2><ul>
+<li><p>Filtering是对大型Collection操作的一个通用操作，Stream提供filter()方法，接受一个Predicate对象，意味着你能传送lambda表达式作为一个过滤逻辑进入这个方法：</p>
+<p>​</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Create a List with String more than 2 characters</span></div><div class="line">List&lt;String&gt; filtered = strList.stream().filter(x -&gt; x.length()&gt; <span class="number">2</span>)</div><div class="line">                                        .collect(Collectors.toList());</div><div class="line">System.out.printf(<span class="string">"Original List : %s, filtered list : %s %n"</span>, </div><div class="line">                  strList, filtered);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Output :</div><div class="line">Original List : [abc, , bcd, , defg, jk], filtered list : [abc, bcd, defg]</div></pre></td></tr></table></figure>
+<h2 id="对集合中每个元素应用函数"><a href="#对集合中每个元素应用函数" class="headerlink" title="对集合中每个元素应用函数"></a>对集合中每个元素应用函数</h2><ul>
+<li><p>使用Stream的distinct()方法过滤集合中重复元素。</p>
+<p>​</p>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// Create List of square of all distinct numbers</div><div class="line">List&lt;Integer&gt; numbers = Arrays.asList(9, 10, 3, 4, 7, 3, 4);</div><div class="line">List&lt;Integer&gt; distinct = numbers.stream().map( i -&gt; i*i).distinct()</div><div class="line">                                         .collect(Collectors.toList());</div><div class="line">System.out.printf("Original List : %s,  Square Without duplicates :</div><div class="line">                   %s %n", numbers, distinct);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Output :</div><div class="line">Original List : [9, 10, 3, 4, 7, 3, 4],  Square Without </div><div class="line">                                         duplicates : [81, 100, 9, 16, 49]</div></pre></td></tr></table></figure>
+<h2 id="计算List中的元素的最大值，最小值，总和及平均值"><a href="#计算List中的元素的最大值，最小值，总和及平均值" class="headerlink" title="计算List中的元素的最大值，最小值，总和及平均值"></a>计算List中的元素的最大值，最小值，总和及平均值</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Get count, min, max, sum, and average for numbers</span></div><div class="line">List&lt;Integer&gt; primes = Arrays.asList(<span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">11</span>, <span class="number">13</span>, <span class="number">17</span>, <span class="number">19</span>, <span class="number">23</span>, <span class="number">29</span>);</div><div class="line">IntSummaryStatistics stats = primes.stream().mapToInt((x) -&gt; x)</div><div class="line">                                            .summaryStatistics();</div><div class="line">System.out.println(<span class="string">"Highest prime number in List : "</span> + stats.getMax());</div><div class="line">System.out.println(<span class="string">"Lowest prime number in List : "</span> + stats.getMin());</div><div class="line">System.out.println(<span class="string">"Sum of all prime numbers : "</span> + stats.getSum());</div><div class="line">System.out.println(<span class="string">"Average of all prime numbers : "</span> + stats.getAverage());</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Output : </div><div class="line">Highest prime number in List : 29</div><div class="line">Lowest prime number in List : 2</div><div class="line">Sum of all prime numbers : 129</div><div class="line">Average of all prime numbers : 12.9</div></pre></td></tr></table></figure>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div></div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/path/to/wechat-reward-image" alt="LIY WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/path/to/alipay-reward-image" alt="LIY Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/07/14/exception/" rel="next" title="异常处理">
+                <i class="fa fa-chevron-left"></i> 异常处理
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/04/03/关山难越/" rel="prev" title="关山难越">
+                关山难越 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/01/14/Java lambda/"
+           data-title="Java 8十个lambda表达式案例" data-url="https://li-y.github.io/2016/01/14/Java lambda/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="LIY" />
+          <p class="site-author-name" itemprop="name">LIY</p>
+          <p class="site-description motion-element" itemprop="description">     往事浓淡, 色如清, 已轻. 经年悲喜, 镜如净, 已净.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ly0518" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/YOG_LI" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/5761822403?is_all=1" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.douban.com/people/147649772/" target="_blank" title="豆瓣">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  豆瓣
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#实现Runnable线程案例"><span class="nav-number">1.</span> <span class="nav-text">实现Runnable线程案例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现事件处理"><span class="nav-number">2.</span> <span class="nav-text">实现事件处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用Lambda表达式和函数接口"><span class="nav-number">3.</span> <span class="nav-text">使用Lambda表达式和函数接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用Lambda实现Map-和-Reduce"><span class="nav-number">4.</span> <span class="nav-text">使用Lambda实现Map 和 Reduce</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过filtering-创建一个字符串String的集合"><span class="nav-number">5.</span> <span class="nav-text">通过filtering 创建一个字符串String的集合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对集合中每个元素应用函数"><span class="nav-number">6.</span> <span class="nav-text">对集合中每个元素应用函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计算List中的元素的最大值，最小值，总和及平均值"><span class="nav-number">7.</span> <span class="nav-text">计算List中的元素的最大值，最小值，总和及平均值</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2010 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LIY</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"li-y"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
