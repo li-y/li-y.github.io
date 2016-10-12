@@ -102,7 +102,7 @@
 <meta property="og:description" content="rabbitmq可靠确认模式的java封装及示例最近的一个计费项目，在rpc调用和流式处理之间徘徊了许久，后来选择流式处理。一是可以增加吞吐量，二是事务的控制相比于rpc要容易很多。
 确定了流式处理的方式，后续是技术的选型。刚开始倾向于用storm，无奈文档实在太少，折腾起来着实费劲。最终放弃，改用消息队列+微服务的方式实现。
 消息队列的选型上，有activemq，rabbitmq，kafka等。">
-<meta property="og:updated_time" content="2016-10-10T02:09:55.197Z">
+<meta property="og:updated_time" content="2016-10-12T11:01:23.779Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RabbitMQ">
 <meta name="twitter:description" content="rabbitmq可靠确认模式的java封装及示例最近的一个计费项目，在rpc调用和流式处理之间徘徊了许久，后来选择流式处理。一是可以增加吞吐量，二是事务的控制相比于rpc要容易很多。
@@ -506,7 +506,7 @@
 <p>消息队列的选型上，有activemq，rabbitmq，kafka等。最开始倾向于用activemq，因为以前的项目用过，很多代码都是可直接复用的。后来看了不少文章对比，发现rabbitmq对多语言的支持更好一点，同时相比于kafka，牺牲了部分的性能换取了更好的稳定性安全性以及持久化。</p>
 <p>最终决定使用rabbitmq。</p>
 <a id="more"></a>
-<h2 id="rabbitmq的官网如下："><a href="#rabbitmq的官网如下：" class="headerlink" title="rabbitmq的官网如下："></a>rabbitmq的官网如下：</h2><ul>
+<h2 id="rabbitmq的官网如下："><a href="#rabbitmq的官网如下：" class="headerlink" title="rabbitmq的官网如下："></a><code>rabbitmq</code>的官网如下：</h2><ul>
 <li><a href="https://www.rabbitmq.com/" target="_blank" rel="external">rabbitmq</a></li>
 </ul>
 <h2 id="对rabbitmq的封装，有几个目标："><a href="#对rabbitmq的封装，有几个目标：" class="headerlink" title="对rabbitmq的封装，有几个目标："></a>对rabbitmq的封装，有几个目标：</h2><ul>
@@ -539,9 +539,10 @@
 <ul>
 <li><p>首先将ConnectionFactory的模式设置为publisherConfirms，如下</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">connectionFactory.setPublisherConfirms(<span class="keyword">true</span>);</div></pre></td></tr></table></figure>
+<ul>
+<li>之后设置rabbitTemplate的confirmCallback，如下：<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">rabbitTemplate.setConfirmCallback(<span class="keyword">new</span> RabbitTemplate.ConfirmCallback() &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">confirm</span><span class="params">(CorrelationData correlationData, <span class="keyword">boolean</span> ack, String cause)</span> </span>&#123;</div><div class="line">       <span class="keyword">if</span> (!ack) &#123;</div><div class="line">           log.info(<span class="string">"send message failed: "</span> + cause); <span class="comment">//+ correlationData.toString());</span></div><div class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"send error "</span> + cause);</div><div class="line">       &#125;</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
 </li>
-<li><p>之后设置rabbitTemplate的confirmCallback，如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">rabbitTemplate.setConfirmCallback(<span class="keyword">new</span> RabbitTemplate.ConfirmCallback() &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">confirm</span><span class="params">(CorrelationData correlationData, <span class="keyword">boolean</span> ack, String cause)</span> </span>&#123;</div><div class="line">       <span class="keyword">if</span> (!ack) &#123;</div><div class="line">           log.info(<span class="string">"send message failed: "</span> + cause); <span class="comment">//+ correlationData.toString());</span></div><div class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"send error "</span> + cause);</div><div class="line">       &#125;</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+</ul>
 </li>
 </ul>
 </li>
@@ -549,9 +550,10 @@
 <ul>
 <li><p>首先在queue创建中指定模式</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">channel.exchangeDeclare(exchange, <span class="string">"direct"</span>, <span class="literal">true</span>, <span class="literal">false</span>, <span class="literal">null</span>);</div><div class="line"><span class="comment">/**</span></div><div class="line"> * Declare a queue</div><div class="line"> * @see com.rabbitmq.client.AMQP.Queue.Declare</div><div class="line"> * @see com.rabbitmq.client.AMQP.Queue.DeclareOk</div><div class="line"> * @param queue the name of the queue</div><div class="line"> * @param durable true if we are declaring a durable queue (the queue will survive a server restart)</div><div class="line"> * @param exclusive true if we are declaring an exclusive queue (restricted to this connection)</div><div class="line"> * @param autoDelete true if we are declaring an autodelete queue (server will delete it when no longer in use)</div><div class="line"> * @param arguments other properties (construction arguments) for the queue</div><div class="line"> * @return a declaration-confirm method to indicate the queue was successfully declared</div><div class="line"> * @throws java.io.IOException if an error is encountered</div><div class="line"> */</div><div class="line">channel.queueDeclare(queue, <span class="literal">true</span>, <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">null</span>);</div></pre></td></tr></table></figure>
+<ul>
+<li>只有在消息处理成功后发送ack确认，或失败后发送nack使信息重新投递<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (detailRes.isSuccess()) &#123;</div><div class="line">    channel.basicAck(delivery.getEnvelope().getDeliveryTag(), <span class="keyword">false</span>);</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">    log.info(<span class="string">"send message failed: "</span> + detailRes.getErrMsg());</div><div class="line">    channel.basicNack(delivery.getEnvelope().getDeliveryTag(), <span class="keyword">false</span>, <span class="keyword">true</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 </li>
-<li><p>只有在消息处理成功后发送ack确认，或失败后发送nack使信息重新投递</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (detailRes.isSuccess()) &#123;</div><div class="line">    channel.basicAck(delivery.getEnvelope().getDeliveryTag(), <span class="keyword">false</span>);</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">    log.info(<span class="string">"send message failed: "</span> + detailRes.getErrMsg());</div><div class="line">    channel.basicNack(delivery.getEnvelope().getDeliveryTag(), <span class="keyword">false</span>, <span class="keyword">true</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</ul>
 </li>
 </ul>
 </li>
@@ -575,7 +577,7 @@
 <ul>
 <li><p>(1) 定义model</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//参考lombok</span></div><div class="line"><span class="meta">@Data</span></div><div class="line"><span class="meta">@AllArgsConstructor</span></div><div class="line"><span class="meta">@NoArgsConstructor</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserMessage</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> id;</div><div class="line">    String name;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
+<ul>
 <li><p>(2) rabbitmq配置<br>配置我们使用@Configuration实现，如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RabbitMQConf</span> </span>&#123;</div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="function">ConnectionFactory <span class="title">connectionFactory</span><span class="params">()</span> </span>&#123;</div><div class="line">        CachingConnectionFactory connectionFactory = <span class="keyword">new</span> CachingConnectionFactory(<span class="string">"127.0.0.1"</span>, <span class="number">5672</span>);</div><div class="line"></div><div class="line">        connectionFactory.setUsername(<span class="string">"guest"</span>);</div><div class="line">        connectionFactory.setPassword(<span class="string">"guest"</span>);</div><div class="line">        connectionFactory.setPublisherConfirms(<span class="keyword">true</span>); <span class="comment">// enable confirm mode</span></div><div class="line"></div><div class="line">        <span class="keyword">return</span> connectionFactory;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 </li>
@@ -594,19 +596,25 @@
 </ul>
 </li>
 </ul>
+</li>
+</ul>
 <h2 id="end"><a href="#end" class="headerlink" title="end"></a>end</h2><ul>
 <li><p>RabbitMq安装</p>
 </li>
 <li><p>RabbitMQ是什么 ？</p>
 <ul>
 <li>RabbitMQ是一个在AMQP基础上完整的，可复用的企业消息系统。他遵循Mozilla Public License开源协议。</li>
-<li>1：安装RabbitMQ需要先安装Erlang语言开发包。下载地址 <a href="http://www.erlang.org/download.html" target="_blank" rel="external">http://www.erlang.org/download.html</a> 在win7下安装Erlang最好默认安装。<br>  <em>配置环境变量 ERLANG_HOME C:\Program Files (x86)\erl5.9
-  </em>添加到PATH  %ERLANG_HOME%\bin;</li>
-<li>2：安装RabbitMQ 下载地址 <a href="http://www.rabbitmq.com/download.html" target="_blank" rel="external">http://www.rabbitmq.com/download.html</a>  安装教程：<a href="http://www.rabbitmq.com/install-windows.html" target="_blank" rel="external">http://www.rabbitmq.com/install-windows.html</a><br>  <em>配置环境变量 C:\Program Files (x86)\RabbitMQ Server\rabbitmq_server-2.8.0
-  </em>添加到PATH %RABBITMQ_SERVER%\sbin;</li>
+<li>1：安装RabbitMQ需要先安装Erlang语言开发包。下载地址 <a href="http://www.erlang.org/download.html" target="_blank" rel="external">http://www.erlang.org/download.html</a> 在win7下安装Erlang最好默认安装。<pre><code>*配置环境变量 ERLANG_HOME C:\Program Files (x86)\erl5.9
+*添加到PATH  %ERLANG_HOME%\bin;
+</code></pre></li>
+<li>2：安装RabbitMQ 下载地址 <a href="http://www.rabbitmq.com/download.html" target="_blank" rel="external">http://www.rabbitmq.com/download.html</a>  安装教程：<a href="http://www.rabbitmq.com/install-windows.html" target="_blank" rel="external">http://www.rabbitmq.com/install-windows.html</a><pre><code>*配置环境变量 C:\Program Files (x86)\RabbitMQ Server\rabbitmq_server-2.8.0
+*添加到PATH %RABBITMQ_SERVER%\sbin;
+</code></pre></li>
 <li>3：进入%RABBITMQ_SERVER%\sbin 目录以管理员身份运行 rabbitmq-plugins.bat<ul>
-<li>rabbitmq-plugins.bat enable rabbitmq_management</li>
+<li>rabbitmq-plugins.bat enable rabbitmq_management<ul>
 <li>安装完成之后以管理员身份启动 rabbitmq-service.bat</li>
+</ul>
+</li>
 <li>rabbitmq-service.bat stop</li>
 <li>rabbitmq-service.bat install</li>
 <li>rabbitmq-service.bat start</li>
@@ -690,6 +698,12 @@
 
 
     <div class="post-spread">
+      
+        
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
       
     </div>
   </div>
