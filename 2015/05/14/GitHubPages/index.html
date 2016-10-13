@@ -879,7 +879,22 @@ clone到本地可以在本地根目录下建一个index.html , push到远程，�
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright" >
+        <div class="article-share" id="share">
+<% if(theme.bdshare.enable){ %>
+      <%- partial('bdshare') %>
+    <% } else { %>
+        <% if(theme.jiathis.enable){ %>
+        <div class="share-jiathis">
+          <%- partial('jiathis') %>
+         </div>
+        <% } else { %>
+          <div data-url="<%- item.permalink %>" data-title="<% if (item.title){ %><%= item.title %> | <% } %><%= config.title %>" data-tsina="<%= theme.author.tsina %>" class="share clearfix">
+          </div>
+        <% } %>
+    <% } %>
+</div>
+
+<div class="copyright" >
   
   &copy;  2010 - 
   <span itemprop="copyrightYear">2016</span>
