@@ -1664,7 +1664,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #91ff50;
+  background: #ffff9e;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2633,5 +2633,15 @@ body {
 @media (max-width: 767px) {
   .post-body {
     text-align: justify;
+  }
+}
+@media (max-width: 767px) {
+  #idhyt-surprise-ball {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  #idhyt-surprise-ball-animation {
+    display: none;
   }
 }
