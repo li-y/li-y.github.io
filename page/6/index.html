@@ -170,7 +170,7 @@
       <span class="logo-line-after"><i></i></span>
     </a>
   </div>
-  <p class="site-subtitle">新的开始</p>
+  <p class="site-subtitle">java笔记</p>
 </div>
 
 <div class="site-nav-toggle">
@@ -422,6 +422,8 @@
  </div>
     </header>
 
+
+
     <main id="main" class="main">
       <div class="main-inner">
         <div class="content-wrap">
@@ -450,8 +452,8 @@
             
               
                 
-                <a class="post-title-link" href="/2014/02/10/cmd-wifi/" itemprop="url">
-                  CMD一键获取 所有连接过的WIFI密码
+                <a class="post-title-link" href="/2015/07/14/exception/" itemprop="url">
+                  异常处理
                 </a>
               
             
@@ -464,8 +466,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2014-02-10T05:17:19+08:00" content="2014-02-10">
-              2014-02-10
+            <time itemprop="dateCreated" datetime="2015-07-14T09:17:19+08:00" content="2015-07-14">
+              2015-07-14
             </time>
           </span>
 
@@ -475,8 +477,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2014/02/10/cmd-wifi/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/02/10/cmd-wifi/" itemprop="commentsCount"></span>
+                <a href="/2015/07/14/exception/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/07/14/exception/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -500,14 +502,17 @@
 
       
         
-          <p><img src="http://7xw4g0.com1.z0.glb.clouddn.com/cmd1.png" alt="cmd"></p>
-<p>CMD平常人看起來根本沒什麼用，但是如果你会使用，你会发现：它真的很强大！</p>
-<p>Windows 8、Windows 8.1、Windows 10已测试成功！Windows 7没条件测试…</p>
-<h2 id="使用方法："><a href="#使用方法：" class="headerlink" title="使用方法："></a>使用方法：</h2><ul>
-<li>以管理员权限运行CMD （以及 开启无线网卡、最好是笔记本）</li>
-</ul>
+          <h2 id="什么是异常"><a href="#什么是异常" class="headerlink" title="什么是异常"></a>什么是异常</h2><pre><code>简而言之，程序运行时产生的不正常现象。也就是说程序正常运行是没有异常的。那些情况下会出现呢？
+</code></pre><ul>
+<li><p>以实际开发为例，造成的原因为:逻辑原因 、环境原因。例如:</p>
+<ul>
+<li><p>int a=0; int b=1/a; ArithmeticException  逻辑原因</p>
+</li>
+<li><p>new File(“c:\a.txt”).getXXX(); FileNotFoundException 逻辑原因</p>
+</li>
+<li><p>client.connet();SocketTimeoutException 环境原因 服务器不能及时响应</p>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2014/02/10/cmd-wifi/#more" rel="contents">
+            <a class="btn" href="/2015/07/14/exception/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -521,17 +526,35 @@
 
     <div>
       
+
     </div>
+<! -- 添加微信图标 -->
+    
+    
+    
+    
 
+
+
+   
     <footer class="post-footer">
+	 
+
       
 
       
+
+ 
+
+
 
       
       
         <div class="post-eof"></div>
       
+
+     
+     
     </footer>
   </article>
 
@@ -541,7 +564,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span>
+    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -577,12 +600,12 @@
                src="/images/avatar.gif"
                alt="LIY" />
           <p class="site-author-name" itemprop="name">LIY</p>
-          <p class="site-description motion-element" itemprop="description">     往事浓淡, 色如清, 已轻. 经年悲喜, 镜如净, 已净.</p>
+          <p class="site-description motion-element" itemprop="description">往事浓淡, 色如清, 已轻. 经年悲喜, 镜如净, 已净.</p>
         </div>
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-count">9</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -641,6 +664,24 @@
                 </a>
               </span>
             
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/your-user-name" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://music.163.com/#/playlist?id=379239144" target="_blank" title="music">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  music
+                </a>
+              </span>
+            
           
         </div>
 
@@ -664,7 +705,8 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright" >
+        
+<div class="copyright" >
   
   &copy;  2010 - 
   <span itemprop="copyrightYear">2016</span>
@@ -787,6 +829,8 @@
     <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
     <script src="/js/src/hook-duoshuo.js"></script>
   
+
+
 
 
 
