@@ -453,8 +453,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/04/14/科比/" itemprop="url">
-                  科比
+                <a class="post-title-link" href="/2016/01/14/Java lambda/" itemprop="url">
+                  Java 8十个lambda表达式案例
                 </a>
               
             
@@ -467,8 +467,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-04-14T05:17:19+08:00" content="2016-04-14">
-              2016-04-14
+            <time itemprop="dateCreated" datetime="2016-01-14T09:17:19+08:00" content="2016-01-14">
+              2016-01-14
             </time>
           </span>
 
@@ -478,8 +478,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/04/14/科比/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/14/科比/" itemprop="commentsCount"></span>
+                <a href="/2016/01/14/Java lambda/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/14/Java lambda/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -503,10 +503,16 @@
 
       
         
-          <p><img src="http://7xw4g0.com1.z0.glb.clouddn.com/%E7%A7%91%E6%AF%94.jpg" alt="科比"></p>
-<div style="text-align: center";>后仰三分美如画,致敬科比！！<br><br><embed src="http://music.163.com/style/swf/widget.swf?sid=208950&type=2&auto=1&width=320&height=66" width="340" height="86"  allowNetworking="all"></embed><br><br></div>
+          <h2 id="实现Runnable线程案例"><a href="#实现Runnable线程案例" class="headerlink" title="实现Runnable线程案例"></a>实现Runnable线程案例</h2><ul>
+<li>使用() -&gt; {} 替代匿名类：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Before Java 8:</span></div><div class="line"><span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"Before Java8 "</span>);</div><div class="line">    &#125;</div><div class="line">&#125;).start();</div><div class="line"></div><div class="line"><span class="comment">//Java 8 way:</span></div><div class="line"><span class="keyword">new</span> Thread( () -&gt; System.out.println(<span class="string">"In Java8!"</span>) ).start();</div></pre></td></tr></table></figure>
+<pre><code>Output:
+too much code, for too little to do
+Lambda expression rocks !!
+</code></pre>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2016/04/14/科比/#more" rel="contents">
+            <a class="btn" href="/2016/01/14/Java lambda/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -558,7 +564,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -599,7 +605,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-count">7</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
