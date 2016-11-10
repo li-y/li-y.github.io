@@ -453,8 +453,8 @@
             
               
                 
-                <a class="post-title-link" href="/2015/07/14/exception/" itemprop="url">
-                  异常处理
+                <a class="post-title-link" href="/2016/01/14/Java lambda/" itemprop="url">
+                  Java 8十个lambda表达式案例
                 </a>
               
             
@@ -467,8 +467,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2015-07-14T09:17:19+08:00" content="2015-07-14">
-              2015-07-14
+            <time itemprop="dateCreated" datetime="2016-01-14T09:17:19+08:00" content="2016-01-14">
+              2016-01-14
             </time>
           </span>
 
@@ -478,8 +478,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2015/07/14/exception/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/07/14/exception/" itemprop="commentsCount"></span>
+                <a href="/2016/01/14/Java lambda/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/14/Java lambda/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -503,17 +503,16 @@
 
       
         
-          <h2 id="什么是异常"><a href="#什么是异常" class="headerlink" title="什么是异常"></a>什么是异常</h2><pre><code>简而言之，程序运行时产生的不正常现象。也就是说程序正常运行是没有异常的。那些情况下会出现呢？
-</code></pre><ul>
-<li><p>以实际开发为例，造成的原因为:逻辑原因 、环境原因。例如:</p>
-<ul>
-<li><p>int a=0; int b=1/a; ArithmeticException  逻辑原因</p>
-</li>
-<li><p>new File(“c:\a.txt”).getXXX(); FileNotFoundException 逻辑原因</p>
-</li>
-<li><p>client.connet();SocketTimeoutException 环境原因 服务器不能及时响应</p>
+          <h2 id="实现Runnable线程案例"><a href="#实现Runnable线程案例" class="headerlink" title="实现Runnable线程案例"></a>实现Runnable线程案例</h2><ul>
+<li>使用() -&gt; {} 替代匿名类：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Before Java 8:</span></div><div class="line"><span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"Before Java8 "</span>);</div><div class="line">    &#125;</div><div class="line">&#125;).start();</div><div class="line"></div><div class="line"><span class="comment">//Java 8 way:</span></div><div class="line"><span class="keyword">new</span> Thread( () -&gt; System.out.println(<span class="string">"In Java8!"</span>) ).start();</div></pre></td></tr></table></figure>
+<pre><code>Output:
+too much code, for too little to do
+Lambda expression rocks !!
+</code></pre>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2015/07/14/exception/#more" rel="contents">
+            <a class="btn" href="/2016/01/14/Java lambda/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -565,7 +564,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -606,7 +605,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-count">8</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

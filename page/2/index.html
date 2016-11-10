@@ -453,8 +453,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/08/14/redis/" itemprop="url">
-                  Redis
+                <a class="post-title-link" href="/2016/10/13/rabbitmq/" itemprop="url">
+                  RabbitMQ
                 </a>
               
             
@@ -467,8 +467,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-14T09:17:19+08:00" content="2016-08-14">
-              2016-08-14
+            <time itemprop="dateCreated" datetime="2016-10-13T05:17:19+08:00" content="2016-10-13">
+              2016-10-13
             </time>
           </span>
 
@@ -478,8 +478,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/08/14/redis/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/14/redis/" itemprop="commentsCount"></span>
+                <a href="/2016/10/13/rabbitmq/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/13/rabbitmq/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -503,20 +503,12 @@
 
       
         
-          <h2 id="redis接口的java封装"><a href="#redis接口的java封装" class="headerlink" title="redis接口的java封装"></a>redis接口的java封装</h2><ul>
-<li><p>主要需要实现几个功能：</p>
-<ul>
-<li>数据获取</li>
-<li>数据缓存</li>
-<li>分布式锁</li>
-<li>带锁的数据处理</li>
-</ul>
-</li>
-<li><p>为了实现这几个功能，对redis做了一层相对很薄的封装，过程如下：</p>
-<ul>
-<li>首先，我们需要定义redis的访问接口，如下：
+          <h2 id="rabbitmq可靠确认模式的java封装及示例"><a href="#rabbitmq可靠确认模式的java封装及示例" class="headerlink" title="rabbitmq可靠确认模式的java封装及示例"></a>rabbitmq可靠确认模式的java封装及示例</h2><p>最近的一个计费项目，在rpc调用和流式处理之间徘徊了许久，后来选择流式处理。一是可以增加吞吐量，二是事务的控制相比于rpc要容易很多。</p>
+<p>确定了流式处理的方式，后续是技术的选型。刚开始倾向于用storm，无奈文档实在太少，折腾起来着实费劲。最终放弃，改用消息队列+微服务的方式实现。</p>
+<p>消息队列的选型上，有activemq，rabbitmq，kafka等。最开始倾向于用activemq，因为以前的项目用过，很多代码都是可直接复用的。后来看了不少文章对比，发现rabbitmq对多语言的支持更好一点，同时相比于kafka，牺牲了部分的性能换取了更好的稳定性安全性以及持久化。</p>
+<p>最终决定使用rabbitmq。</p>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2016/08/14/redis/#more" rel="contents">
+            <a class="btn" href="/2016/10/13/rabbitmq/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -568,7 +560,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -609,7 +601,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-count">8</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
